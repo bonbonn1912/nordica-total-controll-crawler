@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model LgPowerData {
+  id               Int      @id @default(autoincrement())
+  pvPower          Float
+  gridPower        Float
+  loadPower        Float
+  batterySoc       Float
+  batteryStatus    Int
+  batteryPower     Float
+  batteryStrStatus String
+  createdAt        DateTime @default(now())
+}
+
+model Measurement {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @db.DateTime(6)
+  sensorName  String   @db.VarChar(255)
+  sensorValue String   @db.VarChar(255)
+}
+
+model Sensor {
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime? @db.DateTime(6)
+  deviceId   String?   @db.VarChar(255)
+  sensorName String?   @db.VarChar(255)
+  type       String    @db.VarChar(255)
+  updatedAt  DateTime? @db.DateTime(6)
+}
+
+model devices {
+  id                BigInt              @id @default(autoincrement())
+  deviceName        String?             @db.VarChar(255)
+  insertedAt        DateTime?           @db.DateTime(6)
+  ipAddress         String?             @unique(map: "UK_s7dutv99ivb68tuqh9slgnn64") @db.VarChar(255)
+  port              Int
+  updatedAt         DateTime?           @db.DateTime(6)
+  power_consumption power_consumption[]
+}
+
+model electricity_price_history {
+  id         BigInt    @id @default(autoincrement())
+  insertedAt DateTime? @db.DateTime(6)
+  price      Float?    @db.Float
+}
+
+model power_consumption {
+  id                   BigInt    @id @default(autoincrement())
+  insertedAt           DateTime? @db.DateTime(6)
+  phase1_current       Float?
+  phase1_pf            Float?
+  phase1_power         Float?
+  phase1_total         Float?
+  phase1_totalReturned Float?
+  phase1_voltage       Float?
+  phase2_current       Float?
+  phase2_pf            Float?
+  phase2_power         Float?
+  phase2_total         Float?
+  phase2_totalReturned Float?
+  phase2_voltage       Float?
+  phase3_current       Float?
+  phase3_pf            Float?
+  phase3_power         Float?
+  phase3_total         Float?
+  phase3_totalReturned Float?
+  phase3_voltage       Float?
+  powerConsumption     Float?
+  updatedAt            DateTime? @db.DateTime(6)
+  deviceId             BigInt?
+  devices              devices?  @relation(fields: [deviceId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FKbb0l8ae1248hjmlvc7j7jos8c")
+
+  @@index([deviceId], map: "FKbb0l8ae1248hjmlvc7j7jos8c")
+}
+
+model tuya_regler {
+  id          BigInt    @id @default(autoincrement())
+  sensorName  String    @db.VarChar(255)
+  T1          Int?
+  T2          Int?
+  T3          Int?
+  inserted_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model tuya_zaehler {
+  id           BigInt    @id @default(autoincrement())
+  sensorName   String    @db.VarChar(255)
+  Zaehlerstand Int?
+  inserted_at  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model Nordica {
+  id              Int      @id @default(autoincrement())
+  waterTemp       Float
+  smokeTemp       Float
+  power           Float
+  machineState    Float
+  targetRoomTemp  Float
+  targetWaterTemp Float
+  targetPower     Float
+  insertedAt      DateTime @default(now())
+}
