@@ -72,4 +72,4 @@ const getData = async () =>{
    
 }
 
-setInterval(getData, 15000); 
+setInterval(getData, 60000); 
